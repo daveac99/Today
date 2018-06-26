@@ -1,0 +1,23 @@
+﻿@model TodayList.Models.Today
+
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+
+<div class="row" id="todayItem_@Model.TodayId">
+    <div class="col-md-12">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="@Model.TodayId" />
+        <div class="input-group">
+            <div class="input-group-addon dragdrop-handle"><span class="glyphicon glyphicon-move"></span></div>
+            <span class="input-group-addon">
+                <input asp-for="@Model.Done" today-id="@Model.TodayId"/>
+            </span>
+            <input asp-for="@Model.Description" class="form-control" today-id="@Model.TodayId" />
+            <span asp-validation-for="@Model.Description" class="text-danger"></span>
+            <div class="input-group-addon delete-handle" today-id="@Model.TodayId"><span class="glyphicon glyphicon-remove"></span></div>
+        </div>
+    </div>
+</div>
+

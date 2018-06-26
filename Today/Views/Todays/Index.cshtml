@@ -1,0 +1,51 @@
+﻿@model IEnumerable<TodayList.Models.Today>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h4>Today</h4>
+<hr />
+
+<p>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="input-group">
+                <input id="todayAdd" placeholder="New item..." class="form-control" />
+                <div class="input-group-addon add-handle"><span class="glyphicon glyphicon-plus"></span></div>
+            </div>
+        </div>
+    </div>
+
+</p>
+
+@*I think this is here to ge the anti-forgery token*@
+<form asp-action="Edit">
+
+
+
+
+    <div id="sortable-todays">
+        @foreach (var today in Model.Where(t => !t.Done))
+        {
+            @Html.Partial("TodayItemPartial", today)
+        }
+    </div>
+</form>
+
+<h3>Completed</h3>
+<div id="completed-todays">
+    @foreach (var today in Model.Where(t => t.Done && t.DoneDate > (DateTime.Today - TimeSpan.FromDays(14))))
+    {
+        @Html.Partial("TodayItemPartial", today)
+    }
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script src="~/js/Todays.js"></script>
+
+}
