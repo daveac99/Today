@@ -1,10 +1,20 @@
 ﻿$(document).ready(function () {
 
-    setUpPageElements();
+    $(".add-handle").click(function() {
+        addNewToday($(this));
+    });
+
+    $("#todayAdd").keypress(function(event) {
+        if (event.which === 13) {
+            $(".add-handle").click();
+        }
+    });
+
+    setUpRemovableOrAddableElements();
 
 });
 
-function setUpPageElements() {
+function setUpRemovableOrAddableElements() {
 
     // jquery ui sortable and draggable setup
     $("#sortable-todays").sortable({
@@ -36,10 +46,6 @@ function setUpPageElements() {
         deleteFromDB($(this).attr("today-id"));
     });
 
-    $(".add-handle").click(function () {
-        addNewToday($(this));
-    });
-
     $("input:checkbox[Name='Done']").click(function () {
 
         var done = ($(this).is(":checked"));
@@ -58,21 +64,22 @@ function updateDescriptionInDB(id, description) {
 
 function SetDoneValueInDB(id, done) {
 
+    //move item into completed area or vice-versa
+    var todayHtml;
+    if (done) {
+        todayHtml = $("#todayItem_" + id);
+        todayHtml.remove();
+        $("#completed-todays").prepend(todayHtml);
+
+    } else {
+        todayHtml = $("#todayItem_" + id);
+        todayHtml.remove();
+        $("#sortable-todays").append(todayHtml);
+    }
+
     $.post(getUrl("UpdateDone"), { id: id, done: done },
         function (data) {
-            //move item into completed area or vice-versa
-            var todayHtml;
-            if (done) {
-                todayHtml = $("#todayItem_" + id);
-                todayHtml.remove();
-                $("#completed-todays").append(todayHtml);
-
-            } else {
-                todayHtml = $("#todayItem_" + id);
-                todayHtml.remove();
-                $("#sortable-todays").append(todayHtml);
-            }
-            setUpPageElements();
+            setUpRemovableOrAddableElements();
         });
 
 
@@ -89,18 +96,16 @@ function deleteFromDB(id) {
 
 function addNewToday(element) {
     var description = element.prev("input").val();
-    console.log(description);
     $.post(getUrl("AddNewToday"),
         { description: description },
         function (data) {
             //add new item onto existing html
             $("#sortable-todays").append(data);
-            setUpPageElements();
+            setUpRemovableOrAddableElements();
         });
 }
 
 function updateSortOrderinDB(event, ui, element) {
-    //  console.log(element);
     var todays = element.sortable("toArray");
     console.log(todays);
     $.post(getUrl("UpdateSortOrder"), { todays: todays });
