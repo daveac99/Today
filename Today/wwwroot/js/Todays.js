@@ -16,7 +16,12 @@
 
 function setUpRemovableOrAddableElements() {
 
-    // jquery ui sortable and draggable setup
+    setupJqueryUiSortableAndDraggable();
+    allowDescriptionsToAutoSave();
+    setupEventHandlers();
+}
+
+function setupJqueryUiSortableAndDraggable() {
     $("#sortable-todays").sortable({
         placeholder: "ui-state-highlight",
         handle: ".dragdrop-handle",
@@ -26,8 +31,9 @@ function setUpRemovableOrAddableElements() {
             updateSortOrderinDB(event, ui, $(this));
         }
     });
+}
 
-    //allow descriptions to auto-save
+function allowDescriptionsToAutoSave() {
     var timeoutId;
     $("input[name='Description']").on("input", function () {
         clearTimeout(timeoutId);
@@ -39,9 +45,9 @@ function setUpRemovableOrAddableElements() {
         }, 1000);
 
     });
+}
 
-    // event handlers
-
+function setupEventHandlers() {
     $(".delete-handle").click(function () {
         deleteFromDB($(this).attr("today-id"));
     });
@@ -51,8 +57,6 @@ function setUpRemovableOrAddableElements() {
         var done = ($(this).is(":checked"));
         SetDoneValueInDB($(this).attr("today-id"), done);
     });
-
-
 }
 
 //functions to update database
@@ -94,8 +98,10 @@ function deleteFromDB(id) {
 
 }
 
-function addNewToday(element) {
-    var description = element.prev("input").val();
+function addNewToday(jqueryElement) {
+    var newTodayItem = jqueryElement.prev("input");
+    var description = newTodayItem.val();
+    newTodayItem.val("");
     $.post(getUrl("AddNewToday"),
         { description: description },
         function (data) {
