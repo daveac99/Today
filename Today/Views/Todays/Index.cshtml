@@ -19,6 +19,24 @@
 
 </p>
 
+@*create an empty item for a template for new items*@
+<div id="new-today-item-template" style="display: none;">
+    <div class="temporary-today-item">
+        @{
+            var todayNew = new Today()
+            {
+                Description = "",
+                Done = false,
+                ListOrder = 0,
+                TodayId = -1
+            };
+
+            @Html.Partial("TodayItemPartial", todayNew)
+            ;
+        }
+    </div>
+</div>
+
 @*I think this is here to ge the anti-forgery token*@
 <form asp-action="Edit">
 

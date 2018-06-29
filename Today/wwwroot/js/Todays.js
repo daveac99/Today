@@ -95,20 +95,32 @@ function deleteFromDB(id) {
 
     //delete from db
     $.post(getUrl("DeleteToday"), { id: id });
-
 }
 
 function addNewToday(jqueryElement) {
     var newTodayItem = jqueryElement.prev("input");
     var description = newTodayItem.val();
+    createTemporaryNewTodayItem(description);
     newTodayItem.val("");
     $.post(getUrl("AddNewToday"),
         { description: description },
         function (data) {
             //add new item onto existing html
+            removeTemporaryNewTodayItem();
             $("#sortable-todays").append(data);
             setUpRemovableOrAddableElements();
         });
+}
+
+function createTemporaryNewTodayItem(description) {
+    //done for visual effect while waiting for server to return the proper row
+    var newItem = $("#new-today-item-template");
+    $("#sortable-todays").append(newItem.html());
+    $(".temporary-today-item").last().find("input[name='Description']").val(description);
+}
+
+function removeTemporaryNewTodayItem() {
+    $(".temporary-today-item").last().remove();
 }
 
 function updateSortOrderinDB(event, ui, element) {
